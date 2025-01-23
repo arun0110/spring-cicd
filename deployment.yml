@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: springshoppingdeployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: springshopping
+  template:
+    metadata:
+      labels:
+        app: springshopping
+    spec:
+      containers:
+      - name: shopping-container
+        image: ngshoppingreg.azurecr.io/springshopping:93
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8085
+# service type loadbalancer       
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: springshopping
+    k8s-app: springshopping
+  name: springshopping
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 8080
+  type: LoadBalancer
+  selector:
+    app: springshopping
